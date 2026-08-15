@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+/build
+/captures
+.externalNativeBuild
+.cxx
+app/build
+
+# Local planning and performance-review material; not part of the public lab.
+/docs/plans/
+/docs/specs/
+/docs/05_PUBLICACION_TEAMS.md
+/docs/06_COMENTARIOS_CIERRE_OBJETIVO.md
