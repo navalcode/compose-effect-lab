@@ -1,6 +1,6 @@
 # Compose Effect Lab
 
-[Español](README.es.md)
+[Español](README.es.md) · [![CI](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml/badge.svg)](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml)
 
 An interactive Android lab for understanding `LaunchedEffect`, `DisposableEffect` and `rememberUpdatedState`. Fictional, self-contained examples record a timeline so effect ownership and cleanup can be observed.
 

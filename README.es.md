@@ -1,4 +1,4 @@
-[English](README.md) · **Español**
+[English](README.md) · **Español** · [![CI](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml/badge.svg)](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml)
 
 # Compose Effect Lab
 
