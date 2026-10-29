@@ -6,6 +6,12 @@ An interactive Android lab for understanding `LaunchedEffect`, `DisposableEffect
 
 The learning loop is **predict, run, observe and explain**: insert an effect, change its identity, update callbacks, remove it from composition and compare the resulting events.
 
+## Screen and behavior
+
+<img src="docs/images/launched-en.png" width="300" alt="Real Android emulator: keyed effect controls and the recorded timeline in Compose Effect Lab.">
+
+The screen uses local Outfit typography, a paper/ink/copper palette and open trace rows. Product text supports Spanish with an English fallback. Each experiment owns its effects outside lazy list cells: scrolling a result does not cancel or restart work. The latest-value experiment has its own tab and can deliver repeatedly. [Design and accessibility decisions](DESIGN.md) · [Font notice](THIRD_PARTY.md).
+
 ## Compare the effects
 
 | Mechanism | Question to answer |
@@ -40,6 +46,8 @@ Primary reference: [Side-effects in Compose](https://developer.android.com/devel
 
 ## Validation scope
 
-Four JVM tests, lint and the debug APK build passed locally on 29 October 2026 with JDK 17. Lint reported no errors and two warnings; the existing build configuration suppresses dependency-version notices. Four instrumented lifecycle tests also passed on an API 37 emulator. This device result is separate from the JVM tests.
+Four JVM tests, lint and the debug APK build pass locally with JDK 17. Lint reports zero errors and one target-version warning. Nine instrumented tests pass on an API 37 emulator at 360 × 800 dp and150% text: four probe contracts, four whole-screen journeys and one real MainActivity journey. Additional English/Spanish MainActivity journeys and captures use100% text. The real-entry test uses per-app locale APIs on33+; no lower-API device result is claimed.
 
-The debug artifact has aligned native libraries but no R8 metadata. This is not an optimized-release, physical-device or store-distribution claim.
+The scrolling regression first observed two starts of the same key with large text in the original lazy-cell design. The corrected screen keeps one start until the key/presence actually changes. Other journeys verify key replacement/removal, latest-value delivery without restarting, repeated delivery and listener cleanup when leaving its screen.
+
+The existing CI runs JVM tests, lint and the debug build. Native journeys above were run locally; a successful CI badge does not imply they ran remotely. The debug artifact has aligned native libraries and ZIP entries but no R8 metadata. This is not an optimized-release, physical-device or store-distribution claim.

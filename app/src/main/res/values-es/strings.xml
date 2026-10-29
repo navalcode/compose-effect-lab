@@ -1,0 +1,66 @@
+<resources>
+    <string name="tab_guide">Guía</string>
+    <string name="tab_comparison">Comparativa</string>
+    <string name="tab_cases">Casos reales</string>
+    <string name="app_name">Compose Effect Lab</string>
+    <string name="guide_one">Comprender cuándo entra y sale un efecto de la composición</string>
+    <string name="guide_two">Predecir cómo las claves reinician LaunchedEffect</string>
+    <string name="guide_three">Cancelar trabajo suspendible al cambiar clave o retirar la UI</string>
+    <string name="guide_four">Registrar y liberar recursos con DisposableEffect</string>
+    <string name="guide_five">Actualizar valores sin reiniciar mediante rememberUpdatedState</string>
+    <string name="guide_six">Trasladar las reglas a dos casos cercanos a producción</string>
+    <string name="guide_title">Comprender al propietario</string>
+    <string name="guide_body">Los efectos conectan Compose con trabajo externo. Predice qué empieza, qué se reinicia y qué debe liberarse.</string>
+    <string name="rule_title">Regla previa</string>
+    <string name="rule_body">Los eventos de usuario normales van en onClick. Un efecto se usa cuando la presencia o las claves de un composable deben gobernar trabajo asíncrono o un recurso externo.</string>
+    <string name="launched_title">Observar el ciclo de vida</string>
+    <string name="launched_body">Al cambiar la clave se cancela el trabajo anterior. Retirar el efecto también lo cancela.</string>
+    <string name="current_key">Clave actual: %1$d</string>
+    <string name="remove_effect">Retirar efecto</string>
+    <string name="insert_effect">Insertar efecto</string>
+    <string name="change_key">Cambiar clave</string>
+    <string name="updated_title">Un valor nuevo, el mismo efecto</string>
+    <string name="updated_body">Inicia la entrega y cambia el mensaje durante la espera. El efecto entrega el valor más reciente sin reiniciarse.</string>
+    <string name="current_message">Valor actual: %1$s</string>
+    <string name="start_delivery">Iniciar entrega en 3 s</string>
+    <string name="update_message">Actualizar mensaje sin reiniciar</string>
+    <string name="disposable_title">Ser dueño del recurso</string>
+    <string name="disposable_body">Registra un listener y cambia su clave. El recurso anterior se libera antes del nuevo registro. Retirarlo libera el listener.</string>
+    <string name="release_listener">Liberar listener</string>
+    <string name="register_listener">Registrar listener</string>
+    <string name="current_resource">Recurso esperado: %1$s</string>
+    <string name="no_resource">Sin recurso activo</string>
+    <string name="launched_explanation">Ejecuta una coroutine ligada a la composición. Se cancela al salir o al cambiar una clave y es apropiado para trabajo suspendible.</string>
+    <string name="disposable_explanation">Adquiere un recurso externo y exige liberarlo en onDispose. Es apropiado para listeners, observers y callbacks registrables.</string>
+    <string name="updated_explanation">Actualiza un valor o callback capturado por un efecto de larga vida sin convertirlo en clave y sin reiniciar el trabajo.</string>
+    <string name="decision_guide">¿Es una acción directa del usuario? → onClick\n¿Es trabajo suspendible ligado a la UI? → LaunchedEffect\n¿Hay que registrar y liberar un recurso? → DisposableEffect\n¿Debe cambiar un valor sin reiniciar? → rememberUpdatedState</string>
+    <string name="keys_title">Cuidado con las claves</string>
+    <string name="keys_body">Una clave omitida conserva datos obsoletos. Una clave inestable reinicia demasiado trabajo. La clave debe representar exactamente la identidad que invalida el efecto.</string>
+    <string name="analytics_title">Caso 1 · Vista estable</string>
+    <string name="analytics_body">Se envía una analítica solo si la misma pantalla permanece visible durante 2 segundos. Cambiar screenId cancela el envío anterior.</string>
+    <string name="hide_screen">Ocultar pantalla</string>
+    <string name="show_screen">Mostrar pantalla</string>
+    <string name="change_screen">Navegar a otra identidad</string>
+    <string name="lifecycle_title">Caso 2 · LifecycleObserver</string>
+    <string name="lifecycle_body">DisposableEffect registra un observer real en el LifecycleOwner actual y lo retira cuando el ejemplo sale de composición.</string>
+    <string name="remove_observer">Retirar observer</string>
+    <string name="register_observer">Registrar observer</string>
+    <string name="timeline_title">Línea temporal</string>
+    <string name="clear">Limpiar</string>
+    <string name="timeline_empty">Ejecuta un experimento para ver sus eventos aquí.</string>
+    <string name="tab_launched">LaunchedEffect</string>
+    <string name="tab_disposable">DisposableEffect</string>
+    <string name="tab_updated">Valor actualizado</string>
+    <string name="message_a">mensaje A</string>
+    <string name="message_b">mensaje B</string>
+    <string name="event_start">Inicio</string>
+    <string name="event_tick">Pulso</string>
+    <string name="event_info">Información</string>
+    <string name="event_dispose">Liberación</string>
+    <string name="analytics_source">Analítica</string>
+    <string name="analytics_wait">espera screen=%1$d</string>
+    <string name="analytics_sent">enviado screen=%1$d</string>
+    <string name="analytics_cancel">cancelado screen=%1$d</string>
+    <string name="observer_registered">observer registrado</string>
+    <string name="observer_released">observer liberado</string>
+</resources>

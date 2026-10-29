@@ -1,0 +1,66 @@
+<resources>
+    <string name="tab_guide">Guide</string>
+    <string name="tab_comparison">Compare</string>
+    <string name="tab_cases">Cases</string>
+    <string name="app_name">Compose Effect Lab</string>
+    <string name="guide_one">Understand when an effect enters and leaves composition</string>
+    <string name="guide_two">Predict how keys restart LaunchedEffect</string>
+    <string name="guide_three">Cancel suspended work by changing a key or removing its owner</string>
+    <string name="guide_four">Register and release resources with DisposableEffect</string>
+    <string name="guide_five">Update values without restarting with rememberUpdatedState</string>
+    <string name="guide_six">Apply the rules to two fictional practical cases</string>
+    <string name="guide_title">Understand the owner</string>
+    <string name="guide_body">Effects connect Compose to external work. Predict what starts, what restarts and what must be released.</string>
+    <string name="rule_title">Before adding an effect</string>
+    <string name="rule_body">Direct user actions belong in onClick. Use an effect when composition or its keys should own asynchronous work or an external resource.</string>
+    <string name="launched_title">Observe the lifecycle</string>
+    <string name="launched_body">Changing the key cancels the previous work. Removing the effect cancels it too.</string>
+    <string name="current_key">Current key: %1$d</string>
+    <string name="remove_effect">Remove effect</string>
+    <string name="insert_effect">Insert effect</string>
+    <string name="change_key">Change key</string>
+    <string name="updated_title">A new value, the same effect</string>
+    <string name="updated_body">Start delivery, then change the message during the wait. The effect delivers the latest value without restarting.</string>
+    <string name="current_message">Current value: %1$s</string>
+    <string name="start_delivery">Start delivery in 3 s</string>
+    <string name="update_message">Change message without restarting</string>
+    <string name="disposable_title">Own the resource</string>
+    <string name="disposable_body">Register a listener, then change its key. The previous resource must be released before the new registration. Removing it releases the listener.</string>
+    <string name="release_listener">Release listener</string>
+    <string name="register_listener">Register listener</string>
+    <string name="current_resource">Expected resource: %1$s</string>
+    <string name="no_resource">No active resource</string>
+    <string name="launched_explanation">Runs a coroutine owned by composition. It is cancelled when a key changes or its owner leaves. Use it for suspending work.</string>
+    <string name="disposable_explanation">Acquires an external resource and releases it in onDispose. Use it for listeners, observers and registered callbacks.</string>
+    <string name="updated_explanation">Updates a captured value or callback without making it a key or restarting long-lived work.</string>
+    <string name="decision_guide">Direct user action? → onClick\nSuspending work owned by UI? → LaunchedEffect\nRegister and release a resource? → DisposableEffect\nNew value without restarting? → rememberUpdatedState</string>
+    <string name="keys_title">Choose keys deliberately</string>
+    <string name="keys_body">A missing key can keep stale data. An unstable key restarts too much work. A key represents the identity that invalidates the effect.</string>
+    <string name="analytics_title">Case 1 · A stable screen</string>
+    <string name="analytics_body">The fictional analytics event is sent only after the same screen remains visible for two seconds. Changing screenId cancels the previous wait.</string>
+    <string name="hide_screen">Hide screen</string>
+    <string name="show_screen">Show screen</string>
+    <string name="change_screen">Change screen identity</string>
+    <string name="lifecycle_title">Case 2 · LifecycleObserver</string>
+    <string name="lifecycle_body">DisposableEffect registers an observer on the current LifecycleOwner and removes it when its owner leaves composition.</string>
+    <string name="remove_observer">Remove observer</string>
+    <string name="register_observer">Register observer</string>
+    <string name="timeline_title">Timeline</string>
+    <string name="clear">Clear</string>
+    <string name="timeline_empty">Run an experiment to see its events here.</string>
+    <string name="tab_launched">LaunchedEffect</string>
+    <string name="tab_disposable">DisposableEffect</string>
+    <string name="tab_updated">Latest value</string>
+    <string name="message_a">message A</string>
+    <string name="message_b">message B</string>
+    <string name="event_start">Start</string>
+    <string name="event_tick">Tick</string>
+    <string name="event_info">Info</string>
+    <string name="event_dispose">Released</string>
+    <string name="analytics_source">Analytics</string>
+    <string name="analytics_wait">waiting screen=%1$d</string>
+    <string name="analytics_sent">sent screen=%1$d</string>
+    <string name="analytics_cancel">cancelled screen=%1$d</string>
+    <string name="observer_registered">observer registered</string>
+    <string name="observer_released">observer released</string>
+</resources>

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -20,8 +21,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +41,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import com.example.composeeffectlab.R
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,31 +58,27 @@ import com.example.composeeffectlab.model.EventKind
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 
-private enum class LabSection(val label: String) {
-    GUIDE("Guía"),
-    LAUNCHED("LaunchedEffect"),
-    DISPOSABLE("DisposableEffect"),
-    COMPARISON("Comparativa"),
-    REAL_CASES("Casos reales"),
+private enum class LabSection(val labelRes: Int) {
+    GUIDE(R.string.tab_guide),
+    LAUNCHED(R.string.tab_launched),
+    UPDATED(R.string.tab_updated),
+    DISPOSABLE(R.string.tab_disposable),
+    COMPARISON(R.string.tab_comparison),
+    REAL_CASES(R.string.tab_cases),
 }
 
 @Composable
-fun ComposeEffectLabApp() {
+fun ComposeEffectLabApp(onEventsChanged: (List<EffectEvent>) -> Unit = {}) {
     var selected by remember { mutableStateOf(LabSection.GUIDE) }
     var events by remember { mutableStateOf(emptyList<EffectEvent>()) }
-    val recorder = remember { EffectEventRecorder { events = it } }
+    val currentObserver by rememberUpdatedState(onEventsChanged)
+    val recorder = remember { EffectEventRecorder { events = it; currentObserver(it) } }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text("Compose Effect Lab", fontWeight = FontWeight.Bold)
-                        Text(
-                            "Predecir · ejecutar · observar · explicar",
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
+                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge)
                 },
             )
         },
@@ -98,7 +96,9 @@ fun ComposeEffectLabApp() {
                     Tab(
                         selected = section == selected,
                         onClick = { selected = section },
-                        text = { Text(section.label) },
+                        text = { Text(stringResource(section.labelRes)) },
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -106,6 +106,7 @@ fun ComposeEffectLabApp() {
             when (selected) {
                 LabSection.GUIDE -> GuideScreen()
                 LabSection.LAUNCHED -> LaunchedEffectScreen(recorder, events)
+                LabSection.UPDATED -> UpdatedValueScreen(recorder, events)
                 LabSection.DISPOSABLE -> DisposableEffectScreen(recorder, events)
                 LabSection.COMPARISON -> ComparisonScreen()
                 LabSection.REAL_CASES -> RealCasesScreen(recorder, events)
@@ -117,143 +118,97 @@ fun ComposeEffectLabApp() {
 @Composable
 private fun GuideScreen() {
     val milestones = listOf(
-        "1" to "Comprender cuándo entra y sale un efecto de la composición",
-        "2" to "Predecir cómo las claves reinician LaunchedEffect",
-        "3" to "Cancelar trabajo suspendible al cambiar clave o retirar la UI",
-        "4" to "Registrar y liberar recursos con DisposableEffect",
-        "5" to "Actualizar valores sin reiniciar mediante rememberUpdatedState",
-        "6" to "Trasladar las reglas a dos casos cercanos a producción",
+        "1" to stringResource(R.string.guide_one),
+        "2" to stringResource(R.string.guide_two),
+        "3" to stringResource(R.string.guide_three),
+        "4" to stringResource(R.string.guide_four),
+        "5" to stringResource(R.string.guide_five),
+        "6" to stringResource(R.string.guide_six),
     )
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         item {
-            ConceptCard(
-                "Objetivo",
-                "Los efectos conectan el mundo declarativo de Compose con trabajo " +
-                    "externo. Antes de ejecutar, predice cuándo empezará, cuándo se " +
-                    "reiniciará y qué debe liberarse.",
+            ConceptSection(
+                stringResource(R.string.guide_title),
+                stringResource(R.string.guide_body),
             )
         }
         items(milestones) { (number, description) ->
-            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small)
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                    ) {
-                        Text(number, color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(Modifier.width(12.dp))
-                    Text(description)
+            Column {
+                Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.Top) {
+                    Text(number, modifier = Modifier.width(32.dp), color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelLarge)
+                    Text(description, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
                 }
+                HorizontalDivider()
             }
         }
         item {
-            ConceptCard(
-                "Regla previa",
-                "Los eventos de usuario normales van en onClick. Un efecto se usa " +
-                    "cuando la presencia o las claves de un composable deben gobernar " +
-                    "trabajo asíncrono o un recurso externo.",
+            ConceptSection(
+                stringResource(R.string.rule_title),
+                stringResource(R.string.rule_body),
             )
         }
     }
 }
 
 @Composable
-private fun LaunchedEffectScreen(
-    recorder: EffectEventRecorder,
-    events: List<EffectEvent>,
-) {
+private fun LaunchedEffectScreen(recorder: EffectEventRecorder, events: List<EffectEvent>) {
     var effectKey by remember { mutableIntStateOf(1) }
     var visible by remember { mutableStateOf(false) }
-    var currentMessage by remember { mutableStateOf("mensaje A") }
-    var updatedDemoVisible by remember { mutableStateOf(false) }
 
+    // The screen owns the experiment. Scrolling a lazy item does not withdraw it.
+    if (visible) {
+        KeyedLaunchedEffectProbe(effectKey) { raw ->
+            recorder.record("LaunchedEffect", raw, if (raw.startsWith("start")) EventKind.START else EventKind.DISPOSE)
+        }
+    }
     LabPage(events, recorder::clear) {
+        item { ConceptSection(stringResource(R.string.launched_title), stringResource(R.string.launched_body)) }
+        item { CodeBlock("LaunchedEffect(key) {\n  awaitCancellation()\n}") }
         item {
-            ConceptCard(
-                "Predicción",
-                "Activa el efecto y cambia su clave. La coroutine anterior debe " +
-                    "cancelarse antes de comenzar la nueva. Ocultarlo lo retira de la " +
-                    "composición y también lo cancela.",
-            )
-        }
-        item {
-            CodeBlock(
-                "LaunchedEffect(effectKey) {\n" +
-                    "  try { awaitCancellation() }\n" +
-                    "  finally { releaseTemporaryWork() }\n" +
-                    "}",
-            )
-        }
-        item {
-            Text("Clave actual: $effectKey", fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = { visible = !visible }) {
-                Text(if (visible) "Retirar de composición" else "Insertar efecto")
-            }
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = { effectKey++ }, enabled = visible) {
-                Text("Cambiar clave")
-            }
-        }
-        if (visible) {
-            item {
-                KeyedLaunchedEffectProbe(effectKey) { raw ->
-                    val isStart = raw.startsWith("start")
-                    recorder.record(
-                        source = "LaunchedEffect",
-                        message = raw,
-                        kind = if (isStart) EventKind.START else EventKind.DISPOSE,
-                    )
-                }
-            }
-        }
-        item {
-            HorizontalDivider()
+            Text(stringResource(R.string.current_key, effectKey), style = MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(12.dp))
-            ConceptCard(
-                "Valor nuevo sin reiniciar",
-                "Inicia la entrega y cambia el mensaje durante la espera. " +
-                    "rememberUpdatedState permite entregar el valor más reciente sin " +
-                    "convertirlo en una clave y sin reiniciar el efecto.",
-            )
-            Spacer(Modifier.height(8.dp))
-            Text("Valor actual: $currentMessage")
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = { updatedDemoVisible = true }, enabled = !updatedDemoVisible) {
-                Text("Iniciar entrega en 3 s")
+            Button(shape = MaterialTheme.shapes.medium, onClick = { visible = !visible }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(stringResource(if (visible) R.string.remove_effect else R.string.insert_effect))
             }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = {
-                    currentMessage = if (currentMessage == "mensaje A") "mensaje B" else "mensaje A"
-                },
-                enabled = updatedDemoVisible,
-            ) {
-                Text("Actualizar mensaje sin reiniciar")
+            OutlinedButton(shape = MaterialTheme.shapes.medium, onClick = { effectKey++ }, enabled = visible, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.change_key))
             }
         }
-        if (updatedDemoVisible) {
-            item {
-                UpdatedValueEffectProbe(
-                    value = currentMessage,
-                    delayMillis = 3_000,
-                ) { raw ->
-                    recorder.record(
-                        source = "rememberUpdatedState",
-                        message = raw,
-                        kind = if (raw == "start") EventKind.START else EventKind.INFO,
-                    )
-                }
+    }
+}
+
+@Composable
+private fun UpdatedValueScreen(recorder: EffectEventRecorder, events: List<EffectEvent>) {
+    val messageA = stringResource(R.string.message_a)
+    val messageB = stringResource(R.string.message_b)
+    var currentMessage by remember { mutableStateOf(messageA) }
+    var running by remember { mutableStateOf(false) }
+    if (running) {
+        UpdatedValueEffectProbe(currentMessage, 3_000) { raw ->
+            recorder.record("rememberUpdatedState", raw, if (raw == "start") EventKind.START else EventKind.INFO)
+            if (raw.startsWith("delivered:")) running = false
+        }
+    }
+    LabPage(events, recorder::clear) {
+        item { ConceptSection(stringResource(R.string.updated_title), stringResource(R.string.updated_body)) }
+        item { CodeBlock("val latest by rememberUpdatedState(value)\nLaunchedEffect(Unit) {\n  delay(3_000)\n  deliver(latest)\n}") }
+        item {
+            Text(stringResource(R.string.current_message, currentMessage), style = MaterialTheme.typography.titleSmall)
+            Spacer(Modifier.height(12.dp))
+            Button(shape = MaterialTheme.shapes.medium, onClick = { running = true }, enabled = !running, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.start_delivery))
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(shape = MaterialTheme.shapes.medium, onClick = { currentMessage = if (currentMessage == messageA) messageB else messageA },
+                enabled = running, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.update_message))
             }
         }
     }
@@ -277,13 +232,12 @@ private fun DisposableEffectScreen(
         }
     }
 
+    if (visible) DisposableEffectProbe(selectedKey, registry)
     LabPage(events, recorder::clear) {
         item {
-            ConceptCard(
-                "Predicción",
-                "Activa el listener. Al cambiar la clave, Compose ejecutará onDispose " +
-                    "para el recurso anterior y después registrará el nuevo. Al " +
-                    "ocultarlo, no debe quedar ninguna suscripción activa.",
+            ConceptSection(
+                stringResource(R.string.disposable_title),
+                stringResource(R.string.disposable_body),
             )
         }
         item {
@@ -297,7 +251,7 @@ private fun DisposableEffectScreen(
         item {
             Row(Modifier.horizontalScroll(rememberScrollState())) {
                 availableKeys.forEach { key ->
-                    FilterChip(
+                    FilterChip(shape = MaterialTheme.shapes.medium,
                         selected = key == selectedKey,
                         onClick = { selectedKey = key },
                         label = { Text(key) },
@@ -306,17 +260,14 @@ private fun DisposableEffectScreen(
                 }
             }
             Spacer(Modifier.height(8.dp))
-            Button(onClick = { visible = !visible }) {
-                Text(if (visible) "Liberar listener" else "Registrar listener")
+            Button(shape = MaterialTheme.shapes.medium, onClick = { visible = !visible }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(if (visible) stringResource(R.string.release_listener) else stringResource(R.string.register_listener))
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                if (visible) "Recurso esperado: $selectedKey" else "Sin recurso activo",
+                if (visible) stringResource(R.string.current_resource, selectedKey) else stringResource(R.string.no_resource),
                 fontWeight = FontWeight.Bold,
             )
-        }
-        if (visible) {
-            item { DisposableEffectProbe(selectedKey, registry) }
         }
     }
 }
@@ -326,43 +277,35 @@ private fun ComparisonScreen() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         item {
-            ConceptCard(
+            ConceptSection(
                 "LaunchedEffect",
-                "Ejecuta una coroutine ligada a la composición. Se cancela al salir " +
-                    "o al cambiar una clave y es apropiado para trabajo suspendible.",
+                stringResource(R.string.launched_explanation),
             )
         }
         item {
-            ConceptCard(
+            ConceptSection(
                 "DisposableEffect",
-                "Adquiere un recurso externo y exige liberarlo en onDispose. Es " +
-                    "apropiado para listeners, observers y callbacks registrables.",
+                stringResource(R.string.disposable_explanation),
             )
         }
         item {
-            ConceptCard(
+            ConceptSection(
                 "rememberUpdatedState",
-                "Actualiza un valor o callback capturado por un efecto de larga vida " +
-                    "sin convertirlo en clave y sin reiniciar el trabajo.",
+                stringResource(R.string.updated_explanation),
             )
         }
         item {
             CodeBlock(
-                "¿Es una acción directa del usuario? → onClick\n" +
-                    "¿Es trabajo suspendible ligado a la UI? → LaunchedEffect\n" +
-                    "¿Hay que registrar y liberar un recurso? → DisposableEffect\n" +
-                    "¿Debe cambiar un valor sin reiniciar? → rememberUpdatedState",
+                stringResource(R.string.decision_guide),
             )
         }
         item {
-            ConceptCard(
-                "Cuidado con las claves",
-                "Una clave omitida conserva datos obsoletos. Una clave inestable " +
-                    "reinicia demasiado trabajo. La clave debe representar exactamente " +
-                    "la identidad que invalida el efecto.",
+            ConceptSection(
+                stringResource(R.string.keys_title),
+                stringResource(R.string.keys_body),
             )
         }
     }
@@ -377,55 +320,53 @@ private fun RealCasesScreen(
     var analyticsVisible by remember { mutableStateOf(false) }
     var observerVisible by remember { mutableStateOf(false) }
 
+    if (analyticsVisible) StableScreenAnalytics(screenId, recorder)
+    if (observerVisible) LifecycleObserverDemo(recorder)
     LabPage(events, recorder::clear) {
         item {
-            ConceptCard(
-                "Caso 1 · Vista estable",
-                "Se envía una analítica solo si la misma pantalla permanece visible " +
-                    "durante 2 segundos. Cambiar screenId cancela el envío anterior.",
+            ConceptSection(
+                stringResource(R.string.analytics_title),
+                stringResource(R.string.analytics_body),
             )
             Spacer(Modifier.height(8.dp))
             Text("screenId = $screenId", fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-            Button(onClick = { analyticsVisible = !analyticsVisible }) {
-                Text(if (analyticsVisible) "Ocultar pantalla" else "Mostrar pantalla")
+            Button(shape = MaterialTheme.shapes.medium, onClick = { analyticsVisible = !analyticsVisible }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(if (analyticsVisible) stringResource(R.string.hide_screen) else stringResource(R.string.show_screen))
             }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = { screenId++ }, enabled = analyticsVisible) {
-                Text("Navegar a otra identidad")
+            OutlinedButton(shape = MaterialTheme.shapes.medium, onClick = { screenId++ }, enabled = analyticsVisible, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.change_screen))
             }
-        }
-        if (analyticsVisible) {
-            item { StableScreenAnalytics(screenId, recorder) }
         }
         item {
             HorizontalDivider()
             Spacer(Modifier.height(12.dp))
-            ConceptCard(
-                "Caso 2 · LifecycleObserver",
-                "DisposableEffect registra un observer real en el LifecycleOwner " +
-                    "actual y lo retira cuando el ejemplo sale de composición.",
+            ConceptSection(
+                stringResource(R.string.lifecycle_title),
+                stringResource(R.string.lifecycle_body),
             )
             Spacer(Modifier.height(8.dp))
-            Button(onClick = { observerVisible = !observerVisible }) {
-                Text(if (observerVisible) "Retirar observer" else "Registrar observer")
+            Button(shape = MaterialTheme.shapes.medium, onClick = { observerVisible = !observerVisible }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(if (observerVisible) stringResource(R.string.remove_observer) else stringResource(R.string.register_observer))
             }
-        }
-        if (observerVisible) {
-            item { LifecycleObserverDemo(recorder) }
         }
     }
 }
 
 @Composable
 private fun StableScreenAnalytics(screenId: Int, recorder: EffectEventRecorder) {
+    val source = stringResource(R.string.analytics_source)
+    val waiting = stringResource(R.string.analytics_wait, screenId)
+    val sent = stringResource(R.string.analytics_sent, screenId)
+    val cancelledMessage = stringResource(R.string.analytics_cancel, screenId)
     LaunchedEffect(screenId) {
-        recorder.record("Analítica", "espera screen=$screenId", EventKind.START)
+        recorder.record(source, waiting, EventKind.START)
         try {
             delay(2_000)
-            recorder.record("Analítica", "enviado screen=$screenId", EventKind.INFO)
+            recorder.record(source, sent, EventKind.INFO)
         } catch (cancelled: CancellationException) {
-            recorder.record("Analítica", "cancelado screen=$screenId", EventKind.DISPOSE)
+            recorder.record(source, cancelledMessage, EventKind.DISPOSE)
             throw cancelled
         }
     }
@@ -436,16 +377,18 @@ private fun LifecycleObserverDemo(recorder: EffectEventRecorder) {
     val owner = LocalLifecycleOwner.current
     val currentRecorder by rememberUpdatedState(recorder)
 
+    val registered = stringResource(R.string.observer_registered)
+    val released = stringResource(R.string.observer_released)
     DisposableEffect(owner) {
         val observer = LifecycleEventObserver { _, event ->
             currentRecorder.record("Lifecycle", event.name, EventKind.INFO)
         }
         owner.lifecycle.addObserver(observer)
-        recorder.record("Lifecycle", "observer registrado", EventKind.START)
+        recorder.record("Lifecycle", registered, EventKind.START)
 
         onDispose {
             owner.lifecycle.removeObserver(observer)
-            recorder.record("Lifecycle", "observer liberado", EventKind.DISPOSE)
+            recorder.record("Lifecycle", released, EventKind.DISPOSE)
         }
     }
 }
@@ -459,7 +402,7 @@ private fun LabPage(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         content()
         item {
@@ -469,12 +412,12 @@ private fun LabPage(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Línea temporal", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                if (events.isNotEmpty()) OutlinedButton(onClick = onClear) { Text("Limpiar") }
+                Text(stringResource(R.string.timeline_title), modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                if (events.isNotEmpty()) OutlinedButton(shape = MaterialTheme.shapes.medium, onClick = onClear) { Text(stringResource(R.string.clear)) }
             }
         }
         if (events.isEmpty()) {
-            item { Text("Los eventos aparecerán aquí.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            item { Text(stringResource(R.string.timeline_empty), color = MaterialTheme.colorScheme.onSurfaceVariant) }
         } else {
             items(events, key = { it.id }) { event -> EventRow(event) }
         }
@@ -483,56 +426,42 @@ private fun LabPage(
 }
 
 @Composable
-private fun ConceptCard(title: String, body: String) {
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-        Column(Modifier.padding(16.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(6.dp))
-            Text(body, style = MaterialTheme.typography.bodyLarge)
-        }
+private fun ConceptSection(title: String, body: String) {
+    Column {
+        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Spacer(Modifier.height(8.dp))
+        Text(body, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
 private fun CodeBlock(code: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF202124), MaterialTheme.shapes.medium)
-            .padding(16.dp),
-    ) {
-        Text(code, color = Color(0xFFE8EAED), fontFamily = FontFamily.Monospace)
+    Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.medium)
+        .padding(16.dp)) {
+        Text(code, color = MaterialTheme.colorScheme.onPrimaryContainer, fontFamily = FontFamily.Monospace,
+            style = MaterialTheme.typography.bodyMedium)
     }
 }
 
 @Composable
 private fun EventRow(event: EffectEvent) {
-    val accent = when (event.kind) {
-        EventKind.START -> Color(0xFF2457C5)
-        EventKind.TICK -> Color(0xFF6A4C93)
-        EventKind.INFO -> Color(0xFF22733B)
-        EventKind.DISPOSE -> Color(0xFFB14B00)
+    val label = when (event.kind) {
+        EventKind.START -> R.string.event_start
+        EventKind.TICK -> R.string.event_tick
+        EventKind.INFO -> R.string.event_info
+        EventKind.DISPOSE -> R.string.event_dispose
     }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.small)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .background(accent, MaterialTheme.shapes.extraSmall)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-        ) {
-            Text("#${event.id}", color = Color.White, fontWeight = FontWeight.Bold)
+    Column(Modifier.semantics(mergeDescendants = true) {}) {
+        Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.Top) {
+            Text("${event.id}", modifier = Modifier.width(32.dp), style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary)
+            Column(Modifier.weight(1f)) {
+                Text(event.source, style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.height(4.dp))
+                Text(event.message, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Monospace)
+            }
         }
-        Spacer(Modifier.width(10.dp))
-        Column {
-            Text(event.source, fontWeight = FontWeight.Bold)
-            Text(event.message)
-        }
+        HorizontalDivider()
     }
 }
-

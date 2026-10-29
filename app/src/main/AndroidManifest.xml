@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:allowBackup="true"
-        android:label="Compose Effect Lab"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_lab"
         android:supportsRtl="true"
         android:theme="@style/Theme.ComposeEffectLab">
         <activity

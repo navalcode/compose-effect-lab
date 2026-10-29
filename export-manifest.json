@@ -1,0 +1,90 @@
+[
+  {
+    "path": ".gitignore",
+    "sha256": "afc90d40d82c8a682685b26fa30ec06b684b1022b279778d02a300968bfcf776"
+  },
+  {
+    "path": "DESIGN.md",
+    "sha256": "b4c632ed7833986b90aa5072173aaa35350e7ab2c8e4e57f687fe5972e9f23bc"
+  },
+  {
+    "path": "README.es.md",
+    "sha256": "5d4c54eef43e2377c7acc2dfdf1d857fe0a0f6f8b89cb48e368f2cbc9514a206"
+  },
+  {
+    "path": "README.md",
+    "sha256": "628740d0995fc9b74b154ef9d911c8c7565ef50e85b93eec2f902921c2896fb9"
+  },
+  {
+    "path": "THIRD_PARTY.md",
+    "sha256": "ba5884094cc5c83359172c7cb19a515b4ebf237e43729ad342d5ea26d6b468fe"
+  },
+  {
+    "path": "app/src/androidTest/java/com/example/composeeffectlab/ui/EffectActivityJourneyTest.kt",
+    "sha256": "2bd513daa09105231fd904818d9e5de716ed4900a8b93fdac63214d548e07d11"
+  },
+  {
+    "path": "app/src/androidTest/java/com/example/composeeffectlab/ui/EffectScreenTest.kt",
+    "sha256": "412dfef2990b4c0566f9a8655875275b29f00510b08b988cff882098ae6241bc"
+  },
+  {
+    "path": "app/src/main/AndroidManifest.xml",
+    "sha256": "891b33d6a7e90198ae82d77b4cfcf54d7e3c5d0a6315cebdb98ab27a3eebf264"
+  },
+  {
+    "path": "app/src/main/assets/licenses/Outfit-OFL.txt",
+    "sha256": "c676351bf8576b9aba743cd5eaa8c0e7ee0d51f805d720447b4df4ddb6a2e416"
+  },
+  {
+    "path": "app/src/main/java/com/example/composeeffectlab/ui/ComposeEffectLabApp.kt",
+    "sha256": "bbccbf2242edcbea2f01070ed8123a449b2a2c1eb965472f6bb1d145cdf49c92"
+  },
+  {
+    "path": "app/src/main/java/com/example/composeeffectlab/ui/theme/Theme.kt",
+    "sha256": "e76a1edd2fcc5ee097a917b6147689d61ca73184eab4db20dec6654be329a99f"
+  },
+  {
+    "path": "app/src/main/res/drawable/ic_lab.xml",
+    "sha256": "6c89a44e1880c4dda3b053f8e362c5915d00b8d43329124c66630a73cadacf3c"
+  },
+  {
+    "path": "app/src/main/res/font/outfit_bold.ttf",
+    "sha256": "f8431eaa5623b80f6b7047ff39ceea1b623cf0ad9bb4044da05afafdcdb9f7b6"
+  },
+  {
+    "path": "app/src/main/res/font/outfit_medium.ttf",
+    "sha256": "51ab700d53276a167a826eb20e49c689b7e7e3d8084564ece70bdab511993f42"
+  },
+  {
+    "path": "app/src/main/res/font/outfit_regular.ttf",
+    "sha256": "5516f593c5ca20ebf130fa5b83462986daf73dabc66fef7c6ad55284b540079d"
+  },
+  {
+    "path": "app/src/main/res/font/outfit_semibold.ttf",
+    "sha256": "6d2ba45801a26c64a741bd8fb86f04ff9acefa35fadb41f1ccbd1e43ff5f25b4"
+  },
+  {
+    "path": "app/src/main/res/values-es/strings.xml",
+    "sha256": "700ec6a8ed87e63f3e3969b52249c7254397b721c6daf010e6d3b18d27009d39"
+  },
+  {
+    "path": "app/src/main/res/values-v27/styles.xml",
+    "sha256": "b9b7f5066a26242e0c02954d2572b2678356b97e5d437a12c841219ff59a0c68"
+  },
+  {
+    "path": "app/src/main/res/values/strings.xml",
+    "sha256": "9dab049f13883f274dc411409d3c525013ca28f14c1fb78646d980ab833595c2"
+  },
+  {
+    "path": "app/src/main/res/values/styles.xml",
+    "sha256": "1c5b01f602f1c10a1cad29dc39c53d110d2787c18c6c9941d15554821647e5ea"
+  },
+  {
+    "path": "docs/images/launched-en.png",
+    "sha256": "d9b81158252b433a7d6871db34e7276d31ed7588eaaa4c9bee0fa888c8c66894"
+  },
+  {
+    "path": "docs/images/launched-es.png",
+    "sha256": "e1ebfee6b92e4ef106fe24032bd29682fc749d484ece91d1cf6280641118dfad"
+  }
+]
