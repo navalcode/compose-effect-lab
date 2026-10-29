@@ -1,62 +1,45 @@
 # Compose Effect Lab
 
-Proyecto Android didáctico para comprender y aplicar correctamente
-`LaunchedEffect`, `DisposableEffect` y `rememberUpdatedState` en Jetpack Compose.
-Los ejemplos son ficticios, autocontenidos y no incluyen código ni datos
-propietarios.
+[Español](README.es.md)
 
-La dinámica es **predecir, ejecutar, observar y explicar**. Cada laboratorio
-muestra una línea temporal para hacer visible cuándo comienza un efecto, cuándo
-se reinicia, cuándo se cancela y cuándo libera un recurso.
+An interactive Android lab for understanding `LaunchedEffect`, `DisposableEffect` and `rememberUpdatedState`. Fictional, self-contained examples record a timeline so effect ownership and cleanup can be observed.
 
-## Qué cubre
+The learning loop is **predict, run, observe and explain**: insert an effect, change its identity, update callbacks, remove it from composition and compare the resulting events.
 
-| Hito | Evidencia |
+## Compare the effects
+
+| Mechanism | Question to answer |
 |---|---|
-| Comprender `LaunchedEffect` | Demo con clave, salida de composición y cancelación |
-| Comprender `DisposableEffect` | Registro y liberación de listeners simulados |
-| Elegir claves correctas | Cambio interactivo de identidad y línea temporal |
-| Evitar reinicios innecesarios | Demo con `rememberUpdatedState` |
-| Aplicar efectos a casos prácticos | Analítica temporizada y `LifecycleObserver` |
-| Demostrar el comportamiento | Tests unitarios e instrumentados de Compose |
+| `LaunchedEffect` | When should a coroutine start, restart or cancel as keys/presence change? |
+| `DisposableEffect` | Which resource belongs to a composition identity, and when is it released? |
+| `rememberUpdatedState` | How can running work use the current callback without restarting? |
+| Practical examples | How do those choices apply to a fictional timed event and a lifecycle observer? |
 
-## Ejecutar
+The Compose UI controls keys and presence. Pure `EffectEventRecorder` and `FakeListenerRegistry` classes support local tests; instrumented Compose tests inspect actual effect lifecycle behavior. These examples do not collect production analytics.
 
-1. Abrir `ComposeEffectLab` con Android Studio.
-2. Esperar a que finalice la sincronización de Gradle.
-3. Seleccionar un emulador o dispositivo con Android 8 / API 26 o superior.
-4. Ejecutar la configuración `app`.
+## Run
 
-Validación por terminal:
+Requires JDK 17, Android SDK 36 and API 26+ for installation. Open this directory in Android Studio or configure the SDK in untracked `local.properties`.
 
-```bash
-./gradlew testDebugUnitTest assembleDebug
-./gradlew connectedDebugAndroidTest
+```sh
+./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+./gradlew :app:connectedDebugAndroidTest
 ```
 
-El segundo comando requiere un dispositivo o emulador conectado.
+The second command requires an emulator/device. The Gradle 8.13 wrapper verifies its distribution SHA-256; dependencies are pinned in `gradle/libs.versions.toml`.
 
-## Ruta recomendada
+## Guided reading
 
-1. Leer `docs/01_GUIA_DIDACTICA.md`.
-2. Insertar `LaunchedEffect`, cambiar su clave y retirarlo de composición.
-3. Probar `rememberUpdatedState` cambiando el mensaje durante la espera.
-4. Registrar un listener con `DisposableEffect`, cambiar su clave y liberarlo.
-5. Revisar la tabla de `docs/02_COMPARATIVA.md`.
-6. Ejecutar los dos casos reales y resolver `docs/03_EJERCICIOS.md`.
+Detailed exercises remain in Spanish:
 
-## Arquitectura
+- [Learning guide](docs/01_GUIA_DIDACTICA.md)
+- [Effect comparison](docs/02_COMPARATIVA.md)
+- [Exercises](docs/03_EJERCICIOS.md)
 
-```text
-Compose UI ──claves/presencia──> Effects
-    │                               │
-    ├── línea temporal <────────────┤
-    │                               ├── coroutine suspendible
-    │                               └── recurso registrable
-    └── clases puras testeables: recorder + fake registry
-```
+Primary reference: [Side-effects in Compose](https://developer.android.com/develop/ui/compose/side-effects).
 
-## Referencia oficial
+## Validation scope
 
-- [Side-effects in Compose](https://developer.android.com/develop/ui/compose/side-effects)
+Four JVM tests, lint and the debug APK build passed locally on 29 October 2026 with JDK 17. Lint reported no errors and two warnings; the existing build configuration suppresses dependency-version notices. Four instrumented lifecycle tests also passed on an API 37 emulator. This device result is separate from the JVM tests.
 
+The debug artifact has aligned native libraries but no R8 metadata. This is not an optimized-release, physical-device or store-distribution claim.
