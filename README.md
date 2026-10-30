@@ -42,10 +42,10 @@ Pure JVM tests cover the recorder/registry. Instrumented Compose tests inspect l
 
 Detailed Spanish guides:
 
-- [Guia didactica](docs/01_GUIA_DIDACTICA.md)
-- [Comparativa](docs/02_COMPARATIVA.md)
-- [Ejercicios](docs/03_EJERCICIOS.md)
-- [Material para compartir](docs/04_MATERIAL_PARA_COMPARTIR.md)
+- [Guide to effect lifecycle](docs/01_GUIA_DIDACTICA.md)
+- [Effect comparison](docs/02_COMPARATIVA.md)
+- [Exercises](docs/03_EJERCICIOS.md)
+- [Session outline](docs/04_MATERIAL_PARA_COMPARTIR.md)
 
 ## Checks and limits
 

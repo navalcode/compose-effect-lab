@@ -42,10 +42,10 @@ Los tests JVM comprueban el registro de eventos y los recursos simulados. Los te
 
 Guías detalladas en español:
 
-- [Guia didactica](docs/01_GUIA_DIDACTICA.md)
-- [Comparativa](docs/02_COMPARATIVA.md)
+- [Guía del ciclo de vida](docs/01_GUIA_DIDACTICA.md)
+- [Comparativa de efectos](docs/02_COMPARATIVA.md)
 - [Ejercicios](docs/03_EJERCICIOS.md)
-- [Material para compartir](docs/04_MATERIAL_PARA_COMPARTIR.md)
+- [Guion de sesión](docs/04_MATERIAL_PARA_COMPARTIR.md)
 
 ## Comprobaciones y límites
 
