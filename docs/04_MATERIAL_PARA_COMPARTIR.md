@@ -4,6 +4,8 @@
 
 **Efectos predecibles en Compose: claves, cancelación y limpieza**
 
+Guion propuesto para una sesión; no es un registro de una charla impartida.
+
 ## Agenda
 
 1. **2 min — El problema:** una composición puede ejecutarse muchas veces.
@@ -26,7 +28,7 @@
 - ¿Qué trabajo debería pertenecer al ViewModel en lugar de a la pantalla?
 - ¿Qué callbacks deben actualizarse sin reiniciar una operación larga?
 
-## Evidencia del objetivo
+## Preparación y seguimiento
 
 - Proyecto ejecutable y sin información propietaria.
 - Demos interactivas de ambos efectos.
@@ -34,5 +36,5 @@
 - Dos ejemplos transferibles.
 - Tests unitarios e instrumentados.
 - Compilación del APK.
-- Publicación, enlace o acta conservada como evidencia de comunidad.
+- Si se imparte, anotar fecha y preguntas útiles para mejorar los ejercicios.
 

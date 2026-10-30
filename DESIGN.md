@@ -1,6 +1,6 @@
 # Compose Effect Lab: screen design
 
-A working Android learning tool, not a marketing page. Outfit handles labels, instructions and titles; platform monospace is reserved for code and raw trace messages. Local font files and the complete OFL notice are embedded. No runtime font provider, network analytics or decorative animation is introduced.
+An Android tool for comparing effect lifecycle events. Outfit handles labels, instructions and titles; platform monospace is reserved for code and raw trace messages. Local font files and the complete OFL notice are embedded. No runtime font provider, network analytics or decorative animation is introduced.
 
 ## Material and hierarchy
 
@@ -16,6 +16,8 @@ Latest-value delivery has its own tab. It can update a message during the wait w
 
 Product strings use Spanish resources with an English fallback. Technical API names and probe messages such as `start:1` remain stable. The screen follows platform touch/ripple behavior without added motion. Native tests distinguish the host composable from the real MainActivity entry point; actual app captures are credited as emulator output, never physical-device evidence.
 
-## Verification scope
+The app-bar name uses one line with ellipsis when enlarged text would exceed the bar. The full name remains available to accessibility semantics; text size is not reduced.
 
-Four JVM tests and nine instrumented tests on API 37: four probe contracts, four whole-screen journeys and one real MainActivity journey. The latter uses per-app locale support on API 33+; its English/Spanish captures run at 100% text. The whole suite also runs at 150% text,360×800dp. Lint keeps its target-version warning; debug native/ZIP alignment is audited but no R8 rate, optimized release, physical device or store readiness is established. CI runs JVM tests/lint/debug build; local device checks are separate.
+## Verification
+
+See [VERIFICATION.md](docs/VERIFICATION.md) for dated test/build results, native journeys, screenshots and limits. The current editorial review replaces vague headings with specific experiments and actions. API names and stable trace messages remain identifiable.

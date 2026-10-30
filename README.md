@@ -1,53 +1,54 @@
 # Compose Effect Lab
 
-[Español](README.es.md) · [![CI](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml/badge.svg)](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml)
+[Español](README.es.md) · [CI](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml)
 
-An interactive Android lab for understanding `LaunchedEffect`, `DisposableEffect` and `rememberUpdatedState`. Fictional, self-contained examples record a timeline so effect ownership and cleanup can be observed.
+An Android app for comparing LaunchedEffect, DisposableEffect and rememberUpdatedState. Change keys and composition presence, then read the start, cancellation and cleanup events. The examples run locally without an analytics service.
 
-The learning loop is **predict, run, observe and explain**: insert an effect, change its identity, update callbacks, remove it from composition and compare the resulting events.
+<img src="docs/images/launched-en.png" width="300" alt="Compose Effect Lab running in an Android emulator">
 
-## Screen and behavior
+## Try it
 
-<img src="docs/images/launched-en.png" width="300" alt="Real Android emulator: keyed effect controls and the recorded timeline in Compose Effect Lab.">
+1. Open **LaunchedEffect**, insert the effect, change its key and remove it. Compare `start` and `cancel` events.
+2. Open **Latest value**, start the three-second delivery and change the message during the wait. The latest value is delivered without restarting the effect. You can repeat delivery.
+3. Register a listener in **DisposableEffect**. Change its resource key and release it. GPS, Lifecycle and Sensor are names of simulated resources; no location or sensor data is read.
+4. In **Cases**, keep the same screen ID in composition for two seconds to record a fictional event. Changing the ID cancels the earlier wait. The lifecycle observer uses the actual LifecycleOwner and is removed when its example leaves composition.
 
-The screen uses local Outfit typography, a paper/ink/copper palette and open trace rows. Product text supports Spanish with an English fallback. Each experiment owns its effects outside lazy list cells: scrolling a result does not cancel or restart work. The latest-value experiment has its own tab and can deliver repeatedly. [Design and accessibility decisions](DESIGN.md) · [Font notice](THIRD_PARTY.md).
+Scrolling does not remove an experiment from composition. Changing its key, removing it or leaving its tab still cancels/releases its work. Event log clearing only removes recorded events.
 
-## Compare the effects
+## Build and run
 
-| Mechanism | Question to answer |
-|---|---|
-| `LaunchedEffect` | When should a coroutine start, restart or cancel as keys/presence change? |
-| `DisposableEffect` | Which resource belongs to a composition identity, and when is it released? |
-| `rememberUpdatedState` | How can running work use the current callback without restarting? |
-| Practical examples | How do those choices apply to a fictional timed event and a lifecycle observer? |
-
-The Compose UI controls keys and presence. Pure `EffectEventRecorder` and `FakeListenerRegistry` classes support local tests; instrumented Compose tests inspect actual effect lifecycle behavior. These examples do not collect production analytics.
-
-## Run
-
-Requires JDK 17, Android SDK 36 and API 26+ for installation. Open this directory in Android Studio or configure the SDK in untracked `local.properties`.
+Use JDK 17, Android SDK 36 and API 26+ for installation. Open the project in Android Studio or configure the SDK in an untracked `local.properties`. From this directory:
 
 ```sh
 ./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
-./gradlew :app:connectedDebugAndroidTest
+./gradlew :app:installDebug
 ```
 
-The second command requires an emulator/device. The Gradle 8.13 wrapper verifies its distribution SHA-256; dependencies are pinned in `gradle/libs.versions.toml`.
+The Gradle 8.13 wrapper verifies its distribution SHA-256. Dependencies are pinned in `gradle/libs.versions.toml`. Native test locale rules require API 33+; replace `DEVICE_ID` with an explicit serial:
 
-## Guided reading
+```sh
+ANDROID_SERIAL=DEVICE_ID ./gradlew :app:connectedDebugAndroidTest
+```
 
-Detailed exercises remain in Spanish:
+## Read the code
 
-- [Learning guide](docs/01_GUIA_DIDACTICA.md)
-- [Effect comparison](docs/02_COMPARATIVA.md)
-- [Exercises](docs/03_EJERCICIOS.md)
+- [EffectDemos.kt](app/src/main/java/com/example/composeeffectlab/ui/EffectDemos.kt): keyed coroutine, listener lifetime and latest callback probes.
+- [ComposeEffectLabApp.kt](app/src/main/java/com/example/composeeffectlab/ui/ComposeEffectLabApp.kt): controls, effect ownership outside lazy cells and the two practical cases.
+- [FakeListenerRegistry.kt](app/src/main/java/com/example/composeeffectlab/domain/FakeListenerRegistry.kt): simulated registration handles.
+- [EffectEventRecorder.kt](app/src/main/java/com/example/composeeffectlab/model/EffectEventRecorder.kt): ordered event snapshots.
+- [EffectScreenTest.kt](app/src/androidTest/java/com/example/composeeffectlab/ui/EffectScreenTest.kt): scrolling, replacement, repeated delivery and listener release.
 
-Primary reference: [Side-effects in Compose](https://developer.android.com/develop/ui/compose/side-effects).
+Pure JVM tests cover the recorder/registry. Instrumented Compose tests inspect lifecycle behavior; the real-entry test launches MainActivity separately from screen probes. Raw API/probe messages remain stable so they can be matched to code.
 
-## Validation scope
+Detailed Spanish guides:
 
-Four JVM tests, lint and the debug APK build pass locally with JDK 17. Lint reports zero errors and one target-version warning. Nine instrumented tests pass on an API 37 emulator at 360 × 800 dp and150% text: four probe contracts, four whole-screen journeys and one real MainActivity journey. Additional English/Spanish MainActivity journeys and captures use100% text. The real-entry test uses per-app locale APIs on33+; no lower-API device result is claimed.
+- [Guia didactica](docs/01_GUIA_DIDACTICA.md)
+- [Comparativa](docs/02_COMPARATIVA.md)
+- [Ejercicios](docs/03_EJERCICIOS.md)
+- [Material para compartir](docs/04_MATERIAL_PARA_COMPARTIR.md)
 
-The scrolling regression first observed two starts of the same key with large text in the original lazy-cell design. The corrected screen keeps one start until the key/presence actually changes. Other journeys verify key replacement/removal, latest-value delivery without restarting, repeated delivery and listener cleanup when leaving its screen.
+## Checks and limits
 
-The existing CI runs JVM tests, lint and the debug build. Native journeys above were run locally; a successful CI badge does not imply they ran remotely. The debug artifact has aligned native libraries and ZIP entries but no R8 metadata. This is not an optimized-release, physical-device or store-distribution claim.
+The suite contains **4 JVM tests and 9 native tests**. [Verification](docs/VERIFICATION.md) records dated runs, screenshots, audit warnings and the difference between local native coverage and hosted CI. [DESIGN.md](DESIGN.md) explains the interface.
+
+Spanish resources have an English fallback. No physical-device, formal accessibility, optimized-release or store result is claimed. Existing licenses and font/dependency attribution remain in [third-party notices](THIRD_PARTY.md).

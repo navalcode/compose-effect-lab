@@ -1,79 +1,54 @@
 # Compose Effect Lab
 
-[English](README.md) · [![CI](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml/badge.svg)](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml)
+[English](README.md) · [CI](https://github.com/navalcode/compose-effect-lab/actions/workflows/checks.yml)
 
-Proyecto Android didáctico para comprender y aplicar correctamente
-`LaunchedEffect`, `DisposableEffect` y `rememberUpdatedState` en Jetpack Compose.
-Los ejemplos son ficticios, autocontenidos y no incluyen código ni datos
-propietarios.
+Aplicación Android para comparar LaunchedEffect, DisposableEffect y rememberUpdatedState. Cambia claves y retira ejemplos de composición; después consulta los eventos de inicio, cancelación y liberación. Los ejemplos se ejecutan localmente, sin servicio de analítica.
 
-La dinámica es **predecir, ejecutar, observar y explicar**. Cada laboratorio
-muestra una línea temporal para hacer visible cuándo comienza un efecto, cuándo
-se reinicia, cuándo se cancela y cuándo libera un recurso.
+<img src="docs/images/launched-es.png" width="300" alt="Compose Effect Lab ejecutado en un emulador Android">
 
-## Pantalla y comportamiento
+## Qué puedes probar
 
-<img src="docs/images/launched-es.png" width="300" alt="Emulador Android real: controles de claves y línea temporal registrada en Compose Effect Lab.">
+1. Abre **LaunchedEffect**, inserta el efecto, cambia su clave y retíralo. Compara los eventos `start` y `cancel`.
+2. En **Valor actualizado**, inicia la entrega de tres segundos y cambia el mensaje durante la espera. Se entrega el valor más reciente sin reiniciar el efecto. Puedes repetir la entrega.
+3. Registra un listener en **DisposableEffect**, cambia su clave de recurso y libéralo. GPS, Lifecycle y Sensor son nombres de recursos simulados; no se leen ubicación ni sensores.
+4. En **Casos**, mantén el mismo ID de pantalla en composición durante dos segundos para registrar un evento ficticio. Cambiar el ID cancela la espera anterior. El observador de ciclo de vida usa el LifecycleOwner real y se retira al salir su ejemplo de composición.
 
-La pantalla usa Outfit local, paleta papel/tinta/cobre y filas abiertas para las trazas. Los textos del producto tienen recursos españoles y fallback inglés. Cada experimento posee sus efectos fuera de las filas lazy: desplazar el resultado no cancela ni reinicia el trabajo. El ejemplo de valor actualizado tiene su propia pestaña y permite repetir entregas. [Decisiones de diseño y accesibilidad](DESIGN.md) · [Aviso de la fuente](THIRD_PARTY.md).
+Desplazar la lista no retira el experimento de composición. Cambiar su clave, retirarlo o salir de su pestaña sí cancela o libera su trabajo. Borrar eventos solo limpia el registro.
 
+## Compilar y ejecutar
 
-## Qué cubre
+Usa JDK 17, Android SDK 36 y API 26 o superior para instalar. Abre el proyecto en Android Studio o configura el SDK en un `local.properties` sin seguimiento. Desde este directorio:
 
-| Hito | Evidencia |
-|---|---|
-| Comprender `LaunchedEffect` | Demo con clave, salida de composición y cancelación |
-| Comprender `DisposableEffect` | Registro y liberación de listeners simulados |
-| Elegir claves correctas | Cambio interactivo de identidad y línea temporal |
-| Evitar reinicios innecesarios | Demo con `rememberUpdatedState` |
-| Aplicar efectos a casos prácticos | Analítica temporizada y `LifecycleObserver` |
-| Demostrar el comportamiento | Tests unitarios e instrumentados de Compose |
-
-## Ejecutar
-
-1. Abrir este directorio con Android Studio (JDK 17, Android SDK 36).
-2. Esperar a que finalice la sincronización de Gradle.
-3. Seleccionar un emulador o dispositivo con Android 8 / API 26 o superior.
-4. Ejecutar la configuración `app`.
-
-Validación por terminal:
-
-```bash
-./gradlew testDebugUnitTest assembleDebug
-./gradlew connectedDebugAndroidTest
+```sh
+./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+./gradlew :app:installDebug
 ```
 
-El segundo comando requiere un dispositivo o emulador conectado.
+El wrapper de Gradle 8.13 verifica el SHA-256 de su distribución. Las dependencias están fijadas en `gradle/libs.versions.toml`. Las reglas de idioma de los tests nativos requieren API 33+; sustituye `DEVICE_ID` por un serial concreto:
 
-## Ruta recomendada
-
-1. Leer `docs/01_GUIA_DIDACTICA.md`.
-2. Insertar `LaunchedEffect`, cambiar su clave y retirarlo de composición.
-3. Probar `rememberUpdatedState` cambiando el mensaje durante la espera.
-4. Registrar un listener con `DisposableEffect`, cambiar su clave y liberarlo.
-5. Revisar la tabla de `docs/02_COMPARATIVA.md`.
-6. Ejecutar los dos casos reales y resolver `docs/03_EJERCICIOS.md`.
-
-## Arquitectura
-
-```text
-Compose UI ──claves/presencia──> Effects
-    │                               │
-    ├── línea temporal <────────────┤
-    │                               ├── coroutine suspendible
-    │                               └── recurso registrable
-    └── clases puras testeables: recorder + fake registry
+```sh
+ANDROID_SERIAL=DEVICE_ID ./gradlew :app:connectedDebugAndroidTest
 ```
 
-## Referencia oficial
+## Leer el código
 
-- [Side-effects in Compose](https://developer.android.com/develop/ui/compose/side-effects)
+- [EffectDemos.kt](app/src/main/java/com/example/composeeffectlab/ui/EffectDemos.kt): coroutine con clave, ciclo de vida del listener y callback actualizado.
+- [ComposeEffectLabApp.kt](app/src/main/java/com/example/composeeffectlab/ui/ComposeEffectLabApp.kt): controles, efectos fuera de celdas lazy y los dos casos prácticos.
+- [FakeListenerRegistry.kt](app/src/main/java/com/example/composeeffectlab/domain/FakeListenerRegistry.kt): registros simulados.
+- [EffectEventRecorder.kt](app/src/main/java/com/example/composeeffectlab/model/EffectEventRecorder.kt): snapshots ordenados de eventos.
+- [EffectScreenTest.kt](app/src/androidTest/java/com/example/composeeffectlab/ui/EffectScreenTest.kt): scroll, sustitución, entrega repetida y liberación del listener.
 
+Los tests JVM comprueban el registro de eventos y los recursos simulados. Los tests instrumentados verifican los efectos de Compose; la prueba de entrada real abre MainActivity por separado. Los mensajes técnicos de las pruebas mantienen sus identificadores para poder compararlos con el código.
 
-## Alcance de validación
+Guías detalladas en español:
 
-Cuatro tests JVM, lint y build debug correctos localmente con JDK 17. Lint informa cero errores y un aviso de versión objetivo. Nueve tests instrumentados pasan en emulador API 37 a 360 × 800 dp y texto 150%: cuatro contratos de probes, cuatro recorridos de pantalla y uno de MainActivity real. Hay recorridos/capturas adicionales EN/ES de MainActivity a texto 100%. El test de entrada real usa las API de idioma por app de 33+; no se atribuye una prueba de dispositivo de API inferior.
+- [Guia didactica](docs/01_GUIA_DIDACTICA.md)
+- [Comparativa](docs/02_COMPARATIVA.md)
+- [Ejercicios](docs/03_EJERCICIOS.md)
+- [Material para compartir](docs/04_MATERIAL_PARA_COMPARTIR.md)
 
-La regresión de scroll observó primero dos arranques de la misma clave con texto grande en el diseño original de filas lazy. La pantalla corregida conserva un arranque hasta cambiar la clave/presencia. Los otros recorridos comprueban reemplazo/retirada, entrega del valor actualizado sin reiniciar, repetición de entregas y liberación del listener al salir de su pantalla.
+## Comprobaciones y límites
 
-La CI existente ejecuta tests JVM, lint y build debug. Los recorridos nativos anteriores se ejecutaron localmente; el badge correcto no significa que hayan corrido remotamente. El APK debug tiene bibliotecas y entradas ZIP alineadas, sin metadatos R8. No acredita release optimizada, dispositivo físico o distribución en tienda.
+La suite contiene **4 tests JVM y 9 nativos**. [Verificación](docs/VERIFICATION.md), en inglés, recoge las ejecuciones, capturas, avisos de auditoría y la diferencia entre cobertura nativa local y CI. [DESIGN.md](DESIGN.md) explica la interfaz.
+
+Hay recursos españoles con inglés de respaldo. No se atribuye validación física, certificación de accesibilidad, release optimizada ni publicación en tiendas. Se conservan licencias y atribuciones de fuentes/dependencias en [avisos de terceros](THIRD_PARTY.md).

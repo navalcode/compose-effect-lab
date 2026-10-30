@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.semantics
 import com.example.composeeffectlab.R
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -78,7 +79,8 @@ fun ComposeEffectLabApp(onEventsChanged: (List<EffectEvent>) -> Unit = {}) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis)
                 },
             )
         },

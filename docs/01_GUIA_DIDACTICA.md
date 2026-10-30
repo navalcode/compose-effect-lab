@@ -44,7 +44,7 @@ DisposableEffect(source) {
 - Al entrar, registra el recurso.
 - Si cambia `source`, libera el anterior y registra el nuevo.
 - Al salir de composición, ejecuta `onDispose`.
-- Todo `DisposableEffect` debe definir una liberación válida.
+- Si se adquiere un recurso, `onDispose` debe liberarlo.
 
 ## `rememberUpdatedState`
 
@@ -67,7 +67,7 @@ actualizarse durante la espera.
 
 Una clave debe representar la identidad que invalida el trabajo o recurso:
 
-- Falta una clave: el efecto conserva datos obsoletos.
+- Falta una clave necesaria: el efecto puede conservar datos obsoletos.
 - Sobra una clave: el efecto se reinicia innecesariamente.
 - La clave es inestable: puede reiniciarse en cada recomposición.
 

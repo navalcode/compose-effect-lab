@@ -29,9 +29,9 @@ identidad, se combina con `rememberUpdatedState`.
 
 ### Cambio de identidad
 
-`LaunchedEffect(screenId)` cancela la analítica pendiente de una pantalla cuando
-el usuario navega a otra identidad. Solo la pantalla estable durante el intervalo
-completa el envío.
+`LaunchedEffect(screenId)` espera dos segundos antes de registrar un evento ficticio.
+Cambiar el ID o retirar el ejemplo de composición cancela la espera anterior.
+Mantener el mismo ID en composición permite terminarla. No se envían datos a un servicio.
 
 ### Observador del ciclo de vida
 
@@ -44,7 +44,7 @@ observer.
 - Llamar a una API externa directamente en el cuerpo del composable.
 - Usar `LaunchedEffect(Unit)` aunque el trabajo dependa de una identidad cambiante.
 - Incluir un callback cambiante como clave cuando no se desea reiniciar.
-- Crear un `DisposableEffect` cuyo `onDispose` está vacío.
+- Registrar un recurso que necesita liberación y dejar `onDispose` vacío.
 - Lanzar desde un composable trabajo que debe sobrevivir a la pantalla.
 - Confundir recomposición con entrada o salida de composición.
 
